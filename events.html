@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Events — Granite Corridor</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Source Sans 3', sans-serif; background: #F5F0E8; color: #2a2a2a; }
+
+  .header { background: #2D4A3E; padding: 24px 32px; display: flex; align-items: center; justify-content: space-between; }
+  .header-logo { font-family: 'Playfair Display', serif; color: #F5F0E8; font-size: 28px; text-decoration: none; }
+  .header-nav a { color: rgba(245,240,232,0.7); font-size: 14px; text-decoration: none; margin-left: 24px; }
+  .header-nav a:hover { color: #C4A35A; }
+
+  .hero { background: #2D4A3E; padding: 40px 32px 48px; text-align: center; border-bottom: 3px solid #C4A35A; }
+  .hero h1 { font-family: 'Playfair Display', serif; color: #F5F0E8; font-size: 36px; margin-bottom: 8px; }
+  .hero p { color: rgba(245,240,232,0.65); font-size: 15px; }
+
+  .filters { padding: 24px 32px; display: flex; gap: 10px; flex-wrap: wrap; max-width: 1100px; margin: 0 auto; }
+  .filter-btn { padding: 8px 18px; border: 1px solid #2D4A3E; background: transparent; color: #2D4A3E; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: 'Source Sans 3', sans-serif; }
+  .filter-btn:hover { background: #2D4A3E; color: #F5F0E8; }
+  .filter-btn.active { background: #2D4A3E; color: #C4A35A; border-color: #2D4A3E; }
+
+  .events-grid { padding: 0 32px 48px; max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+
+  .event-card { background: #fff; border-radius: 6px; border: 1px solid #DDD8CE; overflow: hidden; transition: box-shadow 0.2s; display: flex; flex-direction: column; }
+  .event-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+
+  .event-card-top { padding: 18px 20px 14px; flex: 1; }
+  .event-category { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
+  .cat-kids { color: #e07b39; }
+  .cat-golf { color: #2D4A3E; }
+  .cat-breweries { color: #7B4F2E; }
+  .cat-pets { color: #5B7FA6; }
+  .cat-general { color: #888; }
+
+  .event-title { font-family: 'Playfair Display', serif; font-size: 17px; color: #2D4A3E; margin-bottom: 10px; line-height: 1.3; }
+  .event-date { font-size: 13px; color: #C4A35A; font-weight: 600; margin-bottom: 6px; }
+  .event-location { font-size: 13px; color: #888; }
+
+  .event-card-bottom { padding: 12px 20px; border-top: 1px solid #F0EBE3; display: flex; justify-content: space-between; align-items: center; }
+  .event-source { font-size: 11px; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
+  .event-link { font-size: 13px; color: #2D4A3E; font-weight: 600; text-decoration: none; border-bottom: 1px solid #C4A35A; padding-bottom: 1px; }
+  .event-link:hover { color: #C4A35A; }
+
+  .loading { text-align: center; padding: 60px; color: #888; font-size: 15px; }
+  .empty { text-align: center; padding: 60px; color: #888; }
+  .empty h3 { font-family: 'Playfair Display', serif; color: #2D4A3E; font-size: 22px; margin-bottom: 8px; }
+
+  .count-bar { padding: 0 32px 16px; max-width: 1100px; margin: 0 auto; font-size: 13px; color: #888; }
+
+  footer { background: #2D4A3E; padding: 28px 32px; text-align: center; margin-top: 40px; }
+  footer p { color: rgba(245,240,232,0.4); font-size: 12px; }
+  footer a { color: #C4A35A; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="/" class="header-logo">Granite Corridor</a>
+  <nav class="header-nav">
+    <a href="/">Home</a>
+    <a href="/events.html">Events</a>
+  </nav>
+</div>
+
+<div class="hero">
+  <h1>Upcoming Events</h1>
+  <p>Things to do in southern NH & northern MA — next 2 weeks</p>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filterEvents('all', this)">🗓 All Events</button>
+  <button class="filter-btn" onclick="filterEvents('kids', this)">👨‍👩‍👧 Kids & Family</button>
+  <button class="filter-btn" onclick="filterEvents('golf', this)">⛳ Golf & Outdoors</button>
+  <button class="filter-btn" onclick="filterEvents('breweries', this)">🍺 Breweries</button>
+  <button class="filter-btn" onclick="filterEvents('pets', this)">🐾 Pets</button>
+  <button class="filter-btn" onclick="filterEvents('general', this)">📍 General</button>
+</div>
+
+<div class="count-bar" id="countBar"></div>
+<div class="events-grid" id="eventsGrid">
+  <div class="loading">Loading events...</div>
+</div>
+
+<footer>
+  <p>
+    <a href="/">granitecorridor.com</a> · Your weekly guide to southern NH & northern MA<br><br>
+    © 2026 Granite Corridor
+  </p>
+</footer>
+
+<script>
+const API_URL = "https://granite-corridor-api.onrender.com/events";
+let allEvents = [];
+let currentFilter = "all";
+
+function formatDate(isoString) {
+  if (!isoString) return "Date TBD";
+  const d = new Date(isoString);
+  return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+}
+
+function categoryLabel(cat) {
+  const map = { kids: "Kids & Family", golf: "Golf & Outdoors", breweries: "Breweries", pets: "Pets", general: "General" };
+  return map[cat] || cat;
+}
+
+function categoryClass(cat) {
+  return `cat-${cat || "general"}`;
+}
+
+function dedup(events) {
+  const seen = new Set();
+  return events.filter(e => {
+    if (seen.has(e.title)) return false;
+    seen.add(e.title);
+    return true;
+  });
+}
+
+function renderEvents(events) {
+  const grid = document.getElementById("eventsGrid");
+  const countBar = document.getElementById("countBar");
+
+  if (!events.length) {
+    grid.innerHTML = `<div class="empty"><h3>No events found</h3><p>Check back soon — new events are added every week.</p></div>`;
+    countBar.textContent = "";
+    return;
+  }
+
+  countBar.textContent = `${events.length} event${events.length !== 1 ? "s" : ""} found`;
+
+  grid.innerHTML = events.map(e => `
+    <div class="event-card" data-category="${e.category || 'general'}">
+      <div class="event-card-top">
+        <div class="event-category ${categoryClass(e.category)}">${categoryLabel(e.category)}</div>
+        <div class="event-title">${e.title}</div>
+        <div class="event-date">${formatDate(e.event_date)}</div>
+        <div class="event-location">📍 ${e.location || e.city}</div>
+      </div>
+      <div class="event-card-bottom">
+        <span class="event-source">${e.source}</span>
+        ${e.url ? `<a href="${e.url}" target="_blank" class="event-link">Details →</a>` : ""}
+      </div>
+    </div>
+  `).join("");
+}
+
+function filterEvents(category, btn) {
+  currentFilter = category;
+  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+
+  const filtered = category === "all" ? allEvents : allEvents.filter(e => e.category === category);
+  renderEvents(filtered);
+}
+
+async function loadEvents() {
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+    allEvents = dedup(data.events || []);
+    renderEvents(allEvents);
+  } catch (e) {
+    document.getElementById("eventsGrid").innerHTML = `<div class="loading">Unable to load events. Please try again later.</div>`;
+  }
+}
+
+loadEvents();
+</script>
+
+</body>
+</html>
