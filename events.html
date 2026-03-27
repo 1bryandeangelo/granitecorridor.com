@@ -100,7 +100,7 @@ let currentFilter = "all";
 function formatDate(isoString) {
   if (!isoString) return "Date TBD";
   const d = new Date(isoString);
-  return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
 }
 
 function categoryLabel(cat) {
