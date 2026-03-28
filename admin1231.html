@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Granite Corridor — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #2D4A3E;
+    --green-dark: #1a2e26;
+    --cream: #F5F0E8;
+    --cream-dark: #EDE8DF;
+    --gold: #C4A35A;
+    --border: #DDD8CE;
+    --text: #1a1a1a;
+    --muted: #666;
+    --red: #c0392b;
+    --success: #27ae60;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f0ece3;
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  nav {
+    background: var(--green-dark);
+    padding: 0 24px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--gold);
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    color: var(--cream);
+    font-size: 20px;
+    text-decoration: none;
+  }
+
+  .nav-logo span { color: var(--gold); }
+  .nav-tag { color: rgba(245,240,232,0.4); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+
+  .page { max-width: 900px; margin: 0 auto; padding: 32px 20px 60px; }
+
+  /* ── SECTIONS ── */
+  .section {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+
+  .section-head {
+    background: var(--green);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-head h2 {
+    font-family: 'Playfair Display', serif;
+    color: var(--cream);
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .section-head .badge {
+    background: var(--gold);
+    color: var(--green-dark);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 10px;
+    border-radius: 10px;
+    margin-left: auto;
+  }
+
+  .section-body { padding: 24px; }
+
+  /* ── UPLOAD ZONE ── */
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 6px;
+    padding: 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    background: var(--cream);
+  }
+
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: var(--gold);
+    background: #fdf8f0;
+  }
+
+  .upload-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .upload-icon { font-size: 36px; margin-bottom: 10px; }
+
+  .upload-zone p {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 300;
+  }
+
+  .upload-zone strong { color: var(--green); font-weight: 500; }
+
+  .preview-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    display: none;
+    margin: 12px auto 0;
+  }
+
+  .extract-btn {
+    margin-top: 14px;
+    background: var(--gold);
+    color: var(--green-dark);
+    border: none;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    display: none;
+    transition: background 0.15s;
+  }
+
+  .extract-btn:hover { background: #d4b36a; }
+  .extract-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .extract-status {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--muted);
+    min-height: 20px;
+  }
+
+  /* ── FORM ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  input, select, textarea {
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    background: #fff;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  input:focus, select:focus, textarea:focus { border-color: var(--green); }
+  textarea { resize: vertical; min-height: 72px; }
+
+  .form-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .btn-primary {
+    background: var(--green);
+    color: var(--cream);
+    border: none;
+    padding: 11px 28px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: background 0.15s;
+  }
+
+  .btn-primary:hover { background: #3d5c4e; }
+
+  .btn-clear {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 11px 20px;
+    font-size: 13px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .btn-clear:hover { border-color: var(--red); color: var(--red); }
+
+  .form-msg {
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 3px;
+    display: none;
+  }
+
+  .form-msg.success { background: #eafaf1; color: var(--success); border: 1px solid #a9dfbf; display: block; }
+  .form-msg.error { background: #fdedec; color: var(--red); border: 1px solid #f5b7b1; display: block; }
+
+  /* ── PENDING QUEUE ── */
+  .pending-card {
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 16px;
+    margin-bottom: 12px;
+    background: var(--cream);
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .pending-card:last-child { margin-bottom: 0; }
+
+  .pending-info { flex: 1; }
+
+  .pending-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--green);
+    margin-bottom: 4px;
+  }
+
+  .pending-meta {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 300;
+    line-height: 1.8;
+  }
+
+  .pending-meta strong { color: var(--text); font-weight: 500; }
+
+  .pending-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .btn-approve {
+    background: var(--success);
+    color: #fff;
+    border: none;
+    padding: 7px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+  }
+
+  .btn-approve:hover { opacity: 0.85; }
+
+  .btn-reject {
+    background: none;
+    border: 1px solid #e0b4b4;
+    color: var(--red);
+    padding: 7px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .btn-reject:hover { background: #fdedec; }
+
+  .pending-empty {
+    text-align: center;
+    padding: 32px;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 300;
+  }
+
+  .pending-url {
+    font-size: 11px;
+    color: var(--gold);
+    text-decoration: none;
+    word-break: break-all;
+  }
+
+  .pending-url:hover { text-decoration: underline; }
+
+  /* MOBILE */
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .pending-card { flex-direction: column; }
+    .pending-actions { flex-direction: row; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Granite<span>Corridor</span></a>
+  <span class="nav-tag">Admin</span>
+</nav>
+
+<div class="page">
+
+  <!-- ADD EVENT -->
+  <div class="section">
+    <div class="section-head">
+      <h2>Add Event</h2>
+    </div>
+    <div class="section-body">
+
+      <!-- Screenshot upload -->
+      <div style="margin-bottom:20px;">
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" accept="image/*" id="screenshotInput" onchange="handleScreenshot(event)">
+          <div class="upload-icon">📸</div>
+          <p><strong>Upload a screenshot</strong> to auto-fill the form</p>
+          <p>Drag & drop or click — works with Eventbrite, Facebook, venue sites</p>
+          <img class="preview-img" id="previewImg">
+        </div>
+        <div style="text-align:center;">
+          <button class="extract-btn" id="extractBtn" onclick="extractFromScreenshot()">Extract event details →</button>
+        </div>
+        <div class="extract-status" id="extractStatus"></div>
+      </div>
+
+      <!-- Form -->
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Event Name *</label>
+          <input type="text" id="f-title" placeholder="e.g. Trivia Night at Backyard Brewery">
+        </div>
+        <div class="form-group">
+          <label>Date *</label>
+          <input type="date" id="f-date">
+        </div>
+        <div class="form-group">
+          <label>Time</label>
+          <input type="time" id="f-time">
+        </div>
+        <div class="form-group">
+          <label>Venue / Location</label>
+          <input type="text" id="f-location" placeholder="e.g. Backyard Brewery & Kitchen">
+        </div>
+        <div class="form-group">
+          <label>City *</label>
+          <select id="f-city">
+            <option value="">Select city...</option>
+            <option>Manchester</option>
+            <option>Nashua</option>
+            <option>Salem</option>
+            <option>Derry</option>
+            <option>Londonderry</option>
+            <option>Lowell</option>
+            <option>Milford</option>
+            <option>Merrimack</option>
+            <option>Hudson</option>
+            <option>Windham</option>
+            <option>Methuen</option>
+            <option>Tewksbury</option>
+            <option>Westford</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Category *</label>
+          <select id="f-category">
+            <option value="general">General</option>
+            <option value="kids">Kids & Family</option>
+            <option value="golf">Golf & Outdoors</option>
+            <option value="breweries">Breweries & Nightlife</option>
+            <option value="pets">Pets</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Source</label>
+          <select id="f-source">
+            <option value="manual">Manual</option>
+            <option value="facebook">Facebook</option>
+            <option value="instagram">Instagram</option>
+            <option value="eventbrite">Eventbrite</option>
+            <option value="venue_direct">Venue Website</option>
+            <option value="community">Community Tip</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Event URL</label>
+          <input type="url" id="f-url" placeholder="https://...">
+        </div>
+        <div class="form-group full">
+          <label>Description (optional)</label>
+          <textarea id="f-description" placeholder="Brief description of the event..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-primary" onclick="adminSubmit()">Publish Event →</button>
+        <button class="btn-clear" onclick="clearForm()">Clear form</button>
+        <div class="form-msg" id="formMsg"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PENDING REVIEW -->
+  <div class="section">
+    <div class="section-head">
+      <h2>Pending Review</h2>
+      <span class="badge" id="pendingBadge">Loading...</span>
+    </div>
+    <div class="section-body" id="pendingList">
+      <div class="pending-empty">Loading submissions...</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API = "https://granite-corridor-api.onrender.com";
+const ADMIN_KEY = "granite2026";
+
+let screenshotBase64 = null;
+let screenshotMimeType = null;
+
+// ── SCREENSHOT UPLOAD ──
+function handleScreenshot(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  screenshotMimeType = file.type;
+  const reader = new FileReader();
+  reader.onload = r => {
+    const result = r.result;
+    screenshotBase64 = result.split(",")[1];
+
+    const img = document.getElementById("previewImg");
+    img.src = result;
+    img.style.display = "block";
+
+    document.getElementById("extractBtn").style.display = "inline-block";
+    document.getElementById("extractStatus").textContent = "Screenshot ready — click Extract to auto-fill the form.";
+  };
+  reader.readAsDataURL(file);
+}
+
+// Drag and drop
+const zone = document.getElementById("uploadZone");
+zone.addEventListener("dragover", e => { e.preventDefault(); zone.classList.add("dragover"); });
+zone.addEventListener("dragleave", () => zone.classList.remove("dragover"));
+zone.addEventListener("drop", e => {
+  e.preventDefault();
+  zone.classList.remove("dragover");
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith("image/")) {
+    document.getElementById("screenshotInput").files = e.dataTransfer.files;
+    handleScreenshot({ target: { files: [file] } });
+  }
+});
+
+// ── EXTRACT FROM SCREENSHOT ──
+async function extractFromScreenshot() {
+  if (!screenshotBase64) return;
+
+  const btn = document.getElementById("extractBtn");
+  const status = document.getElementById("extractStatus");
+  btn.disabled = true;
+  btn.textContent = "Extracting...";
+  status.textContent = "Sending to Claude API...";
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        messages: [{
+          role: "user",
+          content: [
+            {
+              type: "image",
+              source: {
+                type: "base64",
+                media_type: screenshotMimeType,
+                data: screenshotBase64
+              }
+            },
+            {
+              type: "text",
+              text: `Extract event details from this screenshot and return ONLY a JSON object with these exact fields:
+{
+  "title": "event name",
+  "date": "YYYY-MM-DD format if you can determine it, otherwise empty string",
+  "time": "HH:MM in 24-hour format if visible, otherwise empty string",
+  "location": "venue name",
+  "city": "city name only",
+  "category": "one of: kids, golf, breweries, pets, general",
+  "url": "event URL if visible, otherwise empty string",
+  "description": "brief description, 1-2 sentences max"
+}
+
+For category: use breweries for bars/breweries/nightlife, kids for family/children events, golf for outdoor/sports, pets for dog/pet events, general for everything else.
+For date: today is ${new Date().toISOString().split('T')[0]}, use this to interpret relative dates like "this Saturday".
+Return ONLY the JSON object, no explanation.`
+            }
+          ]
+        }]
+      })
+    });
+
+    const data = await res.json();
+    const text = data.content?.[0]?.text || "";
+    const clean = text.replace(/```json|```/g, "").trim();
+    const extracted = JSON.parse(clean);
+
+    // Fill form
+    if (extracted.title) document.getElementById("f-title").value = extracted.title;
+    if (extracted.date) document.getElementById("f-date").value = extracted.date;
+    if (extracted.time) document.getElementById("f-time").value = extracted.time;
+    if (extracted.location) document.getElementById("f-location").value = extracted.location;
+    if (extracted.city) {
+      const citySelect = document.getElementById("f-city");
+      const opt = [...citySelect.options].find(o => o.value.toLowerCase() === extracted.city.toLowerCase());
+      if (opt) citySelect.value = opt.value;
+    }
+    if (extracted.category) document.getElementById("f-category").value = extracted.category;
+    if (extracted.url) document.getElementById("f-url").value = extracted.url;
+    if (extracted.description) document.getElementById("f-description").value = extracted.description;
+
+    status.textContent = "✓ Form filled! Review the details and click Publish.";
+    status.style.color = "#27ae60";
+
+  } catch(err) {
+    status.textContent = "Extraction failed — fill in the form manually.";
+    status.style.color = "#c0392b";
+    console.error(err);
+  }
+
+  btn.disabled = false;
+  btn.textContent = "Extract again";
+}
+
+// ── ADMIN SUBMIT ──
+async function adminSubmit() {
+  const title = document.getElementById("f-title").value.trim();
+  const date = document.getElementById("f-date").value;
+  const city = document.getElementById("f-city").value;
+
+  if (!title || !date || !city) {
+    showMsg("Event name, date, and city are required.", "error");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API}/events/admin`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Admin-Key": ADMIN_KEY
+      },
+      body: JSON.stringify({
+        title,
+        date,
+        time: document.getElementById("f-time").value,
+        location: document.getElementById("f-location").value,
+        city,
+        category: document.getElementById("f-category").value,
+        source: document.getElementById("f-source").value,
+        url: document.getElementById("f-url").value,
+        description: document.getElementById("f-description").value,
+      })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      showMsg("Event published and live on the site!", "success");
+      clearForm();
+    } else {
+      showMsg("Error: " + (data.error || "Unknown error"), "error");
+    }
+  } catch(e) {
+    showMsg("Network error — try again.", "error");
+  }
+}
+
+function showMsg(text, type) {
+  const el = document.getElementById("formMsg");
+  el.textContent = text;
+  el.className = `form-msg ${type}`;
+  setTimeout(() => el.className = "form-msg", 4000);
+}
+
+function clearForm() {
+  ["f-title","f-date","f-time","f-location","f-url","f-description"].forEach(id => {
+    document.getElementById(id).value = "";
+  });
+  document.getElementById("f-city").value = "";
+  document.getElementById("f-category").value = "general";
+  document.getElementById("f-source").value = "manual";
+  document.getElementById("previewImg").style.display = "none";
+  document.getElementById("extractBtn").style.display = "none";
+  document.getElementById("extractStatus").textContent = "";
+  screenshotBase64 = null;
+}
+
+// ── PENDING QUEUE ──
+async function loadPending() {
+  try {
+    const res = await fetch(`${API}/events/pending`, {
+      headers: { "X-Admin-Key": ADMIN_KEY }
+    });
+    const data = await res.json();
+    const events = data.events || [];
+
+    document.getElementById("pendingBadge").textContent = `${events.length} pending`;
+
+    const list = document.getElementById("pendingList");
+    if (!events.length) {
+      list.innerHTML = `<div class="pending-empty">No pending submissions — you're all caught up.</div>`;
+      return;
+    }
+
+    list.innerHTML = events.map(e => {
+      const date = e.event_date ? new Date(e.event_date).toLocaleDateString("en-US", { weekday:"short", month:"short", day:"numeric" }) : "Date TBD";
+      return `
+      <div class="pending-card" id="pending-${e.id}">
+        <div class="pending-info">
+          <div class="pending-title">${e.title}</div>
+          <div class="pending-meta">
+            <strong>${date}</strong> &nbsp;·&nbsp; ${e.location || ''} ${e.city ? '· ' + e.city : ''}<br>
+            Category: <strong>${e.category}</strong> &nbsp;·&nbsp; Source: ${e.source || 'unknown'}<br>
+            Submitted by: ${e.submitted_by || 'public'}
+            ${e.url ? `<br><a href="${e.url}" target="_blank" class="pending-url">${e.url}</a>` : ''}
+            ${e.description ? `<br><em>${e.description}</em>` : ''}
+          </div>
+        </div>
+        <div class="pending-actions">
+          <button class="btn-approve" onclick="approveEvent('${e.id}')">✓ Approve</button>
+          <button class="btn-reject" onclick="rejectEvent('${e.id}')">✗ Reject</button>
+        </div>
+      </div>`;
+    }).join('');
+
+  } catch(e) {
+    document.getElementById("pendingList").innerHTML = `<div class="pending-empty">Failed to load pending events.</div>`;
+  }
+}
+
+async function approveEvent(id) {
+  try {
+    const res = await fetch(`${API}/events/approve/${id}`, {
+      method: "POST",
+      headers: { "X-Admin-Key": ADMIN_KEY }
+    });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById(`pending-${id}`).style.opacity = "0.3";
+      setTimeout(() => {
+        document.getElementById(`pending-${id}`)?.remove();
+        updatePendingBadge();
+      }, 400);
+    }
+  } catch(e) { alert("Error approving event"); }
+}
+
+async function rejectEvent(id) {
+  try {
+    const res = await fetch(`${API}/events/reject/${id}`, {
+      method: "POST",
+      headers: { "X-Admin-Key": ADMIN_KEY }
+    });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById(`pending-${id}`).style.opacity = "0.3";
+      setTimeout(() => {
+        document.getElementById(`pending-${id}`)?.remove();
+        updatePendingBadge();
+      }, 400);
+    }
+  } catch(e) { alert("Error rejecting event"); }
+}
+
+function updatePendingBadge() {
+  const remaining = document.querySelectorAll(".pending-card").length;
+  document.getElementById("pendingBadge").textContent = `${remaining} pending`;
+  if (remaining === 0) {
+    document.getElementById("pendingList").innerHTML = `<div class="pending-empty">No pending submissions — you're all caught up.</div>`;
+  }
+}
+
+loadPending();
+</script>
+</body>
+</html>
