@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suggest an Event — Granite Corridor</title>
+<meta name="description" content="Know about a local event in southern NH or northern MA? Submit it to Granite Corridor and help your neighbors find things to do.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #2D4A3E;
+    --green-dark: #1a2e26;
+    --green-mid: #3d5c4e;
+    --cream: #F5F0E8;
+    --cream-dark: #EDE8DF;
+    --gold: #C4A35A;
+    --border: #DDD8CE;
+    --text: #1a1a1a;
+    --muted: #666;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--green-dark);
+    padding: 0 24px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(196,163,90,0.2);
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    color: var(--cream);
+    font-size: 22px;
+    text-decoration: none;
+  }
+
+  .nav-logo span { color: var(--gold); }
+  .nav-back { color: rgba(245,240,232,0.5); font-size: 13px; text-decoration: none; transition: color 0.15s; }
+  .nav-back:hover { color: var(--gold); }
+
+  /* HERO */
+  .hero {
+    background: var(--green);
+    padding: 40px 24px 36px;
+    text-align: center;
+    border-bottom: 2px solid var(--gold);
+  }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    color: var(--cream);
+    font-size: clamp(26px, 4vw, 38px);
+    margin-bottom: 10px;
+    line-height: 1.15;
+  }
+
+  .hero p {
+    color: rgba(245,240,232,0.6);
+    font-size: 14px;
+    font-weight: 300;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* MAIN */
+  .main {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 36px 20px 60px;
+  }
+
+  .card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .card-head {
+    background: var(--cream-dark);
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-head p {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  .card-head strong { color: var(--green); font-weight: 500; }
+
+  .card-body { padding: 28px 24px; }
+
+  /* FORM */
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  label .req { color: var(--gold); }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 10px 13px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    background: #fff;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  input:focus, select:focus, textarea:focus { border-color: var(--green); }
+  textarea { resize: vertical; min-height: 80px; }
+
+  .hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-weight: 300;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px dashed var(--border);
+    margin: 24px 0;
+  }
+
+  .your-info-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .your-info-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .submit-btn {
+    width: 100%;
+    background: var(--green);
+    color: var(--cream);
+    border: none;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.3px;
+    transition: background 0.15s;
+    margin-top: 6px;
+  }
+
+  .submit-btn:hover { background: var(--green-mid); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .form-note {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 12px;
+    font-weight: 300;
+    line-height: 1.6;
+  }
+
+  /* SUCCESS */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 48px 24px;
+  }
+
+  .success-icon { font-size: 48px; margin-bottom: 16px; }
+
+  .success-screen h2 {
+    font-family: 'Playfair Display', serif;
+    color: var(--green);
+    font-size: 26px;
+    margin-bottom: 10px;
+  }
+
+  .success-screen p {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.7;
+    max-width: 340px;
+    margin: 0 auto 24px;
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--green);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px solid var(--gold);
+    padding-bottom: 2px;
+    transition: color 0.15s;
+  }
+
+  .back-link:hover { color: var(--gold); }
+
+  /* HOW IT WORKS */
+  .how-it-works {
+    margin-top: 28px;
+    background: var(--green);
+    border-radius: 6px;
+    padding: 24px;
+  }
+
+  .how-it-works h3 {
+    font-family: 'Playfair Display', serif;
+    color: var(--cream);
+    font-size: 16px;
+    margin-bottom: 14px;
+  }
+
+  .how-step {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .how-step:last-child { margin-bottom: 0; }
+
+  .step-num {
+    background: var(--gold);
+    color: var(--green-dark);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 500;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-text {
+    font-size: 13px;
+    color: rgba(245,240,232,0.75);
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  /* MOBILE */
+  @media (max-width: 500px) {
+    .form-row { grid-template-columns: 1fr; gap: 18px; }
+    .card-body { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Granite<span>Corridor</span></a>
+  <a href="/" class="nav-back">← Back to events</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">Community</div>
+  <h1>Suggest an Event</h1>
+  <p>Know about something happening in southern NH or northern MA? Share it with your neighbors.</p>
+</div>
+
+<div class="main">
+  <div class="card">
+    <div class="card-head">
+      <p>All submissions are <strong>reviewed before publishing</strong>. We typically review within 24 hours.</p>
+    </div>
+    <div class="card-body">
+
+      <div id="formArea">
+        <!-- Event details -->
+        <div class="form-group">
+          <label>Event Name <span class="req">*</span></label>
+          <input type="text" id="s-title" placeholder="e.g. Comedy Night at Sunstone Brewing">
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label>Date <span class="req">*</span></label>
+            <input type="date" id="s-date">
+          </div>
+          <div>
+            <label>Time</label>
+            <input type="time" id="s-time">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label>Venue / Location</label>
+            <input type="text" id="s-location" placeholder="e.g. Sunstone Brewing">
+          </div>
+          <div>
+            <label>City <span class="req">*</span></label>
+            <select id="s-city">
+              <option value="">Select city...</option>
+              <option>Manchester</option>
+              <option>Nashua</option>
+              <option>Salem</option>
+              <option>Derry</option>
+              <option>Londonderry</option>
+              <option>Lowell</option>
+              <option>Milford</option>
+              <option>Merrimack</option>
+              <option>Hudson</option>
+              <option>Windham</option>
+              <option>Methuen</option>
+              <option>Tewksbury</option>
+              <option>Westford</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Category</label>
+          <select id="s-category">
+            <option value="general">General</option>
+            <option value="kids">Kids & Family</option>
+            <option value="golf">Golf & Outdoors</option>
+            <option value="breweries">Breweries & Nightlife</option>
+            <option value="pets">Pets</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Event Link</label>
+          <input type="url" id="s-url" placeholder="https://eventbrite.com/... or venue website">
+          <p class="hint">Helps us verify the event and gives people a place to learn more.</p>
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="s-description" placeholder="Tell us a bit about the event — what it is, who it's for, anything worth knowing..."></textarea>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Submitter info -->
+        <div class="your-info-label">Your info (optional)</div>
+
+        <div class="form-row">
+          <div>
+            <label>Your Name</label>
+            <input type="text" id="s-name" placeholder="First name is fine">
+          </div>
+          <div>
+            <label>Your Email</label>
+            <input type="email" id="s-email" placeholder="In case we have questions">
+            <p class="hint">Never shared or used for marketing.</p>
+          </div>
+        </div>
+
+        <button class="submit-btn" onclick="submitEvent()">Submit for Review →</button>
+        <p class="form-note">We review all submissions before publishing. Events must be in southern NH or northern MA to be listed.</p>
+      </div>
+
+      <!-- Success -->
+      <div class="success-screen" id="successScreen">
+        <div class="success-icon">🎉</div>
+        <h2>Thanks for the tip!</h2>
+        <p>We'll review your submission and get it on the site if it's a good fit. Usually within 24 hours.</p>
+        <a href="/" class="back-link">Back to events →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div class="how-it-works">
+    <h3>How it works</h3>
+    <div class="how-step">
+      <div class="step-num">1</div>
+      <div class="step-text">Fill out the form above with the event details — the more info the better.</div>
+    </div>
+    <div class="how-step">
+      <div class="step-num">2</div>
+      <div class="step-text">Our team reviews the submission to make sure it's a good fit for the corridor.</div>
+    </div>
+    <div class="how-step">
+      <div class="step-num">3</div>
+      <div class="step-text">Approved events go live on Granite Corridor and are visible to everyone in the area.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API = "https://granite-corridor-api.onrender.com";
+
+async function submitEvent() {
+  const title = document.getElementById("s-title").value.trim();
+  const date = document.getElementById("s-date").value;
+  const city = document.getElementById("s-city").value;
+
+  if (!title) { alert("Please enter an event name."); return; }
+  if (!date) { alert("Please enter a date."); return; }
+  if (!city) { alert("Please select a city."); return; }
+
+  const btn = document.querySelector(".submit-btn");
+  btn.disabled = true;
+  btn.textContent = "Submitting...";
+
+  try {
+    const name = document.getElementById("s-name").value.trim();
+    const email = document.getElementById("s-email").value.trim();
+    const submittedBy = name ? `${name}${email ? ' (' + email + ')' : ''}` : (email || "public");
+
+    const res = await fetch(`${API}/events/submit`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title,
+        date,
+        time: document.getElementById("s-time").value,
+        location: document.getElementById("s-location").value.trim(),
+        city,
+        category: document.getElementById("s-category").value,
+        url: document.getElementById("s-url").value.trim(),
+        description: document.getElementById("s-description").value.trim(),
+        submitted_by: submittedBy,
+      })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById("formArea").style.display = "none";
+      document.getElementById("successScreen").style.display = "block";
+    } else {
+      alert("Something went wrong. Please try again.");
+      btn.disabled = false;
+      btn.textContent = "Submit for Review →";
+    }
+  } catch(e) {
+    alert("Network error. Please try again.");
+    btn.disabled = false;
+    btn.textContent = "Submit for Review →";
+  }
+}
+</script>
+
+</body>
+</html>
