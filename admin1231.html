@@ -466,8 +466,12 @@ function handleScreenshot(e) {
 
   screenshotMimeType = file.type;
   const reader = new FileReader();
-  reader.onload = r => {
-    const result = r.result;
+  reader.onload = function() {
+    const result = reader.result;
+    if (!result) {
+      document.getElementById("extractStatus").textContent = "Failed to read image — try again.";
+      return;
+    }
     screenshotBase64 = result.split(",")[1];
 
     const img = document.getElementById("previewImg");
