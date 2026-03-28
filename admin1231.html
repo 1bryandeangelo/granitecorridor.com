@@ -461,13 +461,13 @@ let screenshotMimeType = null;
 
 // ── SCREENSHOT UPLOAD ──
 function handleScreenshot(e) {
-  const file = e.target.files[0];
+  const file = e.target?.files?.[0] || e.dataTransfer?.files?.[0];
   if (!file) return;
 
   screenshotMimeType = file.type;
   const reader = new FileReader();
-  reader.onload = function() {
-    const result = reader.result;
+  reader.onload = function(loadEvent) {
+    const result = loadEvent.target.result;
     if (!result) {
       document.getElementById("extractStatus").textContent = "Failed to read image — try again.";
       return;
