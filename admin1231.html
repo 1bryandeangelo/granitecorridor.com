@@ -518,14 +518,9 @@ async function extractFromScreenshot() {
   })
 });
 
-const data = await res.json();
-if (!data.success) throw new Error(data.error);
-const extracted = data.data;
-
-    const data = await res.json();
-    const text = data.content?.[0]?.text || "";
-    const clean = text.replace(/```json|```/g, "").trim();
-    const extracted = JSON.parse(clean);
+const result = await res.json();
+if (!result.success) throw new Error(result.error);
+const extracted = result.data;
 
     // Fill form
     if (extracted.title) document.getElementById("f-title").value = extracted.title;
