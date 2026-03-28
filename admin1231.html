@@ -509,45 +509,18 @@ async function extractFromScreenshot() {
   status.textContent = "Sending to Claude API...";
 
   try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        messages: [{
-          role: "user",
-          content: [
-            {
-              type: "image",
-              source: {
-                type: "base64",
-                media_type: screenshotMimeType,
-                data: screenshotBase64
-              }
-            },
-            {
-              type: "text",
-              text: `Extract event details from this screenshot and return ONLY a JSON object with these exact fields:
-{
-  "title": "event name",
-  "date": "YYYY-MM-DD format if you can determine it, otherwise empty string",
-  "time": "HH:MM in 24-hour format if visible, otherwise empty string",
-  "location": "venue name",
-  "city": "city name only",
-  "category": "one of: kids, golf, breweries, pets, general",
-  "url": "event URL if visible, otherwise empty string",
-  "description": "brief description, 1-2 sentences max"
-}
+   const res = await fetch(`${API}/extract-event`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    image: screenshotBase64,
+    mime_type: screenshotMimeType
+  })
+});
 
-For category: use breweries for bars/breweries/nightlife, kids for family/children events, golf for outdoor/sports, pets for dog/pet events, general for everything else.
-For date: today is ${new Date().toISOString().split('T')[0]}, use this to interpret relative dates like "this Saturday".
-Return ONLY the JSON object, no explanation.`
-            }
-          ]
-        }]
-      })
-    });
+const data = await res.json();
+if (!data.success) throw new Error(data.error);
+const extracted = data.data;
 
     const data = await res.json();
     const text = data.content?.[0]?.text || "";
