@@ -720,13 +720,54 @@ function categoryLabel(cat) {
   return { kids: "Kids & Family", golf: "Golf & Outdoors", breweries: "Breweries", pets: "Pets", general: "General" }[cat] || cat;
 }
 
+const PREMIUM_VENUES = [
+  "palace theatre","tupelo music hall","lowell memorial","nashua center for the arts",
+  "tsongas center","rex theatre","the derryfield","labelle winery","strange brew",
+  "boarding house park","jewel","nashua center"
+];
+const PAINT_TERMS = ["paintbar","paint and sip","paint night","paint your own","sip and paint","painting class","glassware"];
+
+function scoreEvent(e) {
+  let score = 50;
+  const title = (e.title || "").toLowerCase();
+  const loc   = (e.location || "").toLowerCase();
+  const src   = e.source || "";
+
+  if (e.url)                                          score += 20;
+  if (e.location)                                     score += 8;
+  if (src === "venue_direct")                         score += 12;
+  if (src === "eventbrite")                           score += 5;
+  if (PREMIUM_VENUES.some(v => loc.includes(v)))      score += 25;
+  if (PAINT_TERMS.some(p => title.includes(p) || loc.includes(p))) score -= 45;
+  if (/\(\$\d+\)/.test(e.title) && loc.includes("paintbar")) score -= 20;
+
+  return score;
+}
+
 function dedup(events) {
-  const seen = new Set();
-  return events.filter(e => {
-    if (seen.has(e.title)) return false;
-    seen.add(e.title);
+  // Pass 1: exact title (case-insensitive)
+  const titleSeen = new Set();
+  let result = events.filter(e => {
+    const key = (e.title || "").toLowerCase().trim();
+    if (titleSeen.has(key)) return false;
+    titleSeen.add(key);
     return true;
   });
+
+  // Pass 2: same venue + same hour → keep whichever has a URL (pre-sort so URL events win)
+  result.sort((a, b) => (b.url ? 1 : 0) - (a.url ? 1 : 0));
+  const slotSeen = new Set();
+  result = result.filter(e => {
+    const loc = (e.location || "").toLowerCase().trim();
+    if (!loc || loc.length < 4) return true;
+    const d = new Date(e.event_date);
+    const slot = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}|${loc}`;
+    if (slotSeen.has(slot)) return false;
+    slotSeen.add(slot);
+    return true;
+  });
+
+  return result;
 }
 
 function cleanSource(s) {
@@ -741,7 +782,9 @@ function groupByDay(events) {
     if (!groups[key]) groups[key] = [];
     groups[key].push(e);
   });
-  return Object.entries(groups).sort(([a],[b]) => a.localeCompare(b));
+  return Object.entries(groups)
+    .sort(([a],[b]) => a.localeCompare(b))
+    .map(([key, dayEvents]) => [key, dayEvents.sort((a, b) => scoreEvent(b) - scoreEvent(a))]);
 }
 
 function cardHTML(e) {
