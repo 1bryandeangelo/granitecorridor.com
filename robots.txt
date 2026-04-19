@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin1231.html
+
+Sitemap: https://granitecorridor.com/sitemap.xml

@@ -4,18 +4,35 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Granite Corridor — Things to Do in Southern NH & Northern MA</title>
-<meta name="description" content="Upcoming events, things to do, and weekend plans in southern New Hampshire and northern Massachusetts. Manchester, Nashua, Lowell, Salem, Derry and beyond.">
+<meta name="description" content="The only events guide covering both Southern NH and Northern MA. Upcoming things to do in Manchester, Nashua, Lowell, Salem, Derry and beyond — updated weekly.">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://granitecorridor.com/">
+<meta property="og:title" content="Granite Corridor — Things to Do in Southern NH & Northern MA">
+<meta property="og:description" content="The only events guide covering both Southern NH and Northern MA. Manchester, Nashua, Lowell, Salem, Derry and beyond.">
+<meta property="og:image" content="https://granitecorridor.com/og-image.jpg">
+<meta property="og:site_name" content="Granite Corridor">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Granite Corridor — Things to Do in Southern NH & Northern MA">
+<meta name="twitter:description" content="The only events guide covering both Southern NH and Northern MA. Updated weekly.">
+<meta name="twitter:image" content="https://granitecorridor.com/og-image.jpg">
+
+<!-- Canonical -->
+<link rel="canonical" href="https://granitecorridor.com/">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --green: #2D4A3E;
-    --green-dark: #1a2e26;
-    --green-mid: #3d5c4e;
+    --green: #1C2B38;
+    --green-dark: #101C27;
+    --green-mid: #27394A;
     --cream: #F5F0E8;
     --cream-dark: #EDE8DF;
-    --gold: #C4A35A;
-    --gold-light: #d4b36a;
+    --gold: #C97A35;
+    --gold-light: #DA8E4A;
     --text: #1a1a1a;
     --text-muted: #666;
     --border: #DDD8CE;
@@ -307,7 +324,7 @@
 
   .card-accent { height: 3px; }
   .card-accent.cat-kids { background: #E07B39; }
-  .card-accent.cat-golf { background: #2D4A3E; }
+  .card-accent.cat-golf { background: #3A6B4F; }
   .card-accent.cat-breweries { background: #8B5E3C; }
   .card-accent.cat-pets { background: #5B7FA6; }
   .card-accent.cat-general { background: var(--gold); }
@@ -334,7 +351,7 @@
   }
 
   .cat-kids { color: #E07B39; }
-  .cat-golf { color: #2D4A3E; }
+  .cat-golf { color: #3A6B4F; }
   .cat-breweries { color: #8B5E3C; }
   .cat-pets { color: #5B7FA6; }
   .cat-general { color: #999; }
@@ -596,8 +613,8 @@
 </nav>
 
 <div class="hero">
-  <div class="hero-eyebrow">Your local guide</div>
-  <h1>Things to do in <em>southern NH & northern MA</em></h1>
+  <div class="hero-eyebrow">The only cross-border guide</div>
+  <h1>The <em>Granite Corridor</em> — Southern NH + Northern MA</h1>
   <p class="hero-sub">Manchester · Nashua · Lowell · Salem · Derry and beyond</p>
 </div>
 
@@ -749,6 +766,40 @@ function cardHTML(e) {
   </div>`;
 }
 
+function injectStructuredData(events) {
+  const existing = document.getElementById("ld-events");
+  if (existing) existing.remove();
+
+  const items = events.slice(0, 50).map(e => {
+    const obj = {
+      "@type": "Event",
+      "name": e.title,
+      "startDate": e.event_date,
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": e.location || e.city || "Granite Corridor",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": e.city || "",
+          "addressRegion": e.city === "Lowell" || e.city === "Methuen" || e.city === "Tewksbury" || e.city === "Westford" ? "MA" : "NH",
+          "addressCountry": "US"
+        }
+      }
+    };
+    if (e.url) obj["url"] = e.url;
+    if (e.description) obj["description"] = e.description;
+    return obj;
+  });
+
+  const script = document.createElement("script");
+  script.id = "ld-events";
+  script.type = "application/ld+json";
+  script.textContent = JSON.stringify({ "@context": "https://schema.org", "@graph": items });
+  document.head.appendChild(script);
+}
+
 function renderEvents(events) {
   const container = document.getElementById("eventsContainer");
   const countEl = document.getElementById("resultsCount");
@@ -776,6 +827,8 @@ function renderEvents(events) {
       </div>
     </div>`;
   }).join('');
+
+  injectStructuredData(events);
 }
 
 function applyFilters() {
