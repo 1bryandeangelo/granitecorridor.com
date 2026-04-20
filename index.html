@@ -450,7 +450,8 @@
     z-index: 200;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 16px;
+    box-sizing: border-box;
   }
 
   .modal-overlay.open { display: flex; }
@@ -459,20 +460,24 @@
     background: var(--cream);
     border-radius: 4px;
     padding: 36px;
-    max-width: 440px;
+    max-width: 480px;
     width: 100%;
     position: relative;
     border-top: 4px solid var(--gold);
+    box-sizing: border-box;
   }
 
   .modal-close {
     position: absolute;
-    top: 14px; right: 18px;
+    top: 12px; right: 14px;
     background: none;
     border: none;
-    font-size: 22px;
-    color: var(--text-muted);
+    font-size: 28px;
+    line-height: 1;
+    color: var(--text);
     cursor: pointer;
+    padding: 6px 8px;
+    touch-action: manipulation;
   }
 
   .modal h2 {
@@ -669,16 +674,18 @@
     <button class="modal-close" onclick="closeModal()">×</button>
     <div id="modalForm">
       <h2>Stay in the loop</h2>
-      <p>Get the best local events delivered every Thursday. Free forever.</p>
+      <p>Get the best local events delivered every Thursday. Free. Unsubscribe anytime.</p>
       <div class="modal-row">
         <input type="text" id="firstName" placeholder="First name">
         <input type="email" id="email" placeholder="Email address">
       </div>
       <div class="modal-prefs">
-        <div class="pref-chip" onclick="toggleChip(this)">👨‍👩‍👧 Family</div>
-        <div class="pref-chip" onclick="toggleChip(this)">⛳ Golf & Outdoors</div>
+        <div class="pref-chip" onclick="toggleChip(this)">🎵 Music</div>
+        <div class="pref-chip" onclick="toggleChip(this)">🍽️ Food & Drink</div>
+        <div class="pref-chip" onclick="toggleChip(this)">🎨 Arts</div>
+        <div class="pref-chip" onclick="toggleChip(this)">👨‍👩‍👧 Kids & Family</div>
+        <div class="pref-chip" onclick="toggleChip(this)">🌿 Outdoors</div>
         <div class="pref-chip" onclick="toggleChip(this)">🍺 Breweries</div>
-        <div class="pref-chip" onclick="toggleChip(this)">🐾 Pets</div>
       </div>
       <button class="modal-submit" onclick="subscribe()">Subscribe free →</button>
     </div>
