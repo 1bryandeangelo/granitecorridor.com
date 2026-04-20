@@ -615,7 +615,7 @@
 <div class="hero">
   <div class="hero-eyebrow">The only cross-border guide</div>
   <h1>The <em>Granite Corridor</em> — Southern NH + Northern MA</h1>
-  <p class="hero-sub">Manchester · Nashua · Lowell · Salem · Derry and beyond</p>
+  <p class="hero-sub">Manchester · Nashua · Lowell · Newburyport · Haverhill · Derry and beyond</p>
 </div>
 
 <div class="filter-bar">
@@ -634,12 +634,15 @@
   <div class="filter-divider"></div>
   <div class="filter-pills" id="cityPills">
     <button class="pill active" onclick="setFilter('city','all',this)">All cities</button>
+    <button class="pill" onclick="setFilter('city','northern-ma',this)">Northern MA</button>
     <button class="pill" onclick="setFilter('city','Manchester',this)">Manchester</button>
     <button class="pill" onclick="setFilter('city','Nashua',this)">Nashua</button>
     <button class="pill" onclick="setFilter('city','Salem',this)">Salem</button>
     <button class="pill" onclick="setFilter('city','Derry',this)">Derry</button>
     <button class="pill" onclick="setFilter('city','Lowell',this)">Lowell</button>
-    <button class="pill" onclick="setFilter('city','Milford',this)">Milford</button>
+    <button class="pill" onclick="setFilter('city','Newburyport',this)">Newburyport</button>
+    <button class="pill" onclick="setFilter('city','Haverhill',this)">Haverhill</button>
+    <button class="pill" onclick="setFilter('city','Methuen',this)">Methuen</button>
   </div>
 </div>
 
@@ -693,6 +696,11 @@ let allEvents = [];
 let activeCategory = "all";
 let activeCity = "all";
 
+const NORTHERN_MA_CITIES = new Set([
+  "Lowell","Methuen","Haverhill","Newburyport","Lawrence","Andover","North Andover",
+  "Chelmsford","Tewksbury","Westford","Billerica","Amesbury","Dracut","Merrimac"
+]);
+
 const TODAY = new Date();
 TODAY.setHours(0,0,0,0);
 
@@ -723,7 +731,9 @@ function categoryLabel(cat) {
 const PREMIUM_VENUES = [
   "palace theatre","tupelo music hall","lowell memorial","nashua center for the arts",
   "tsongas center","rex theatre","the derryfield","labelle winery","strange brew",
-  "boarding house park","jewel","nashua center"
+  "boarding house park","jewel","nashua center",
+  "firehouse center","newburyport brewing","michael's harborside","maudslay",
+  "methuen memorial music hall","phoenician","river ruckus","warp and weft"
 ];
 const PAINT_TERMS = ["paintbar","paint and sip","paint night","paint your own","sip and paint","painting class","glassware"];
 
@@ -878,7 +888,11 @@ function applyFilters() {
   const q = document.getElementById("searchInput").value.toLowerCase().trim();
   let filtered = allEvents;
   if (activeCategory !== "all") filtered = filtered.filter(e => e.category === activeCategory);
-  if (activeCity !== "all") filtered = filtered.filter(e => e.city === activeCity);
+  if (activeCity === "northern-ma") {
+    filtered = filtered.filter(e => NORTHERN_MA_CITIES.has(e.city));
+  } else if (activeCity !== "all") {
+    filtered = filtered.filter(e => e.city === activeCity);
+  }
   if (q) filtered = filtered.filter(e =>
     (e.title||"").toLowerCase().includes(q) ||
     (e.location||"").toLowerCase().includes(q) ||
